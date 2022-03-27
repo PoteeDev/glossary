@@ -6,6 +6,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 )
@@ -59,14 +60,53 @@ func Find(c *cli.Context) error {
 	return nil
 }
 
+const url = "https://raw.githubusercontent.com/PoteeDev/glossary/main/terms.yml"
+const password = "store flag"
+
+func Download(c *cli.Context) error {
+	res, err := http.Get(url)
+	if err != nil {
+		log.Printf("http.Get -> %v", err)
+		return err
+	}
+
+	// We read all the bytes of the image
+	// Types: data []byte
+	data, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Println("ioutil.ReadAll -> %v", err)
+		return err
+	}
+
+	// You have to manually close the body, check docs
+	// This is required if you want to use things like
+	// Keep-Alive and other HTTP sorcery.
+	res.Body.Close()
+
+	filename := "terms.yml"
+
+	if err = ioutil.WriteFile(filename, data, 0644); err != nil {
+		log.Println("Error Saving:", filename, err)
+	} else {
+		log.Println("Saved:", filename)
+	}
+	return nil
+}
+
 func main() {
 	app := &cli.App{
 		Commands: []*cli.Command{
 			{
 				Name:    "find",
 				Aliases: []string{"f"},
-				Usage:   "find word",
+				Usage:   "Find word",
 				Action:  Find,
+			},
+			{
+				Name:    "download",
+				Aliases: []string{"d"},
+				Usage:   "Download latest glossary",
+				Action:  Download,
 			},
 		},
 	}
