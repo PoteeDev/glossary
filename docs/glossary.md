@@ -9,7 +9,7 @@
 ## Вклад в ресурс
 Здесь напишем про тг, что туда можно написать или спросить.
 ```
-user@vacabulary:~$ potee-explaine иб 
+user@vacabulary:~$ glossary find ИБ
 ````
 :::danger
 Предупреждение
