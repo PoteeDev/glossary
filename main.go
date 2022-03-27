@@ -61,7 +61,6 @@ func Find(c *cli.Context) error {
 }
 
 const url = "https://raw.githubusercontent.com/PoteeDev/glossary/main/terms.yml"
-const password = "store flag"
 
 func Download(c *cli.Context) error {
 	res, err := http.Get(url)
