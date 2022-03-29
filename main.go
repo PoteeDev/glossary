@@ -61,10 +61,16 @@ func Find(c *cli.Context) error {
 }
 
 const url = "https://raw.githubusercontent.com/PoteeDev/glossary/main/terms.yml"
-const password = "store flag"
+const password = "g1thub_h@rdc0d3_p@$$w0rd"
 
 func Download(c *cli.Context) error {
-	res, err := http.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Authorization", password)
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		log.Printf("http.Get -> %v", err)
 		return err
@@ -72,16 +78,12 @@ func Download(c *cli.Context) error {
 
 	// We read all the bytes of the image
 	// Types: data []byte
-	data, err := ioutil.ReadAll(res.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Println("ioutil.ReadAll -> %v", err)
 		return err
 	}
-
-	// You have to manually close the body, check docs
-	// This is required if you want to use things like
-	// Keep-Alive and other HTTP sorcery.
-	res.Body.Close()
+	resp.Body.Close()
 
 	filename := "terms.yml"
 
